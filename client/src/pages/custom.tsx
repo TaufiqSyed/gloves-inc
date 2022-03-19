@@ -15,6 +15,7 @@ import {
   Button,
   useColorMode,
 } from '@chakra-ui/react'
+import Navbar from '../components/Navbar'
 import type { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
@@ -31,6 +32,8 @@ import {
   secondaryComponentColor,
 } from '../constants/colors'
 import Gloves from '../components/Gloves'
+import { IUser } from '../constants/interfaces'
+import axios from 'axios'
 
 // const Gloves = dynamic(() => import('../components/Gloves'), {
 //   ssr: false,
@@ -44,7 +47,9 @@ const Home = ({ sport: initialSport }) => {
   const [sport, setSport] = useState(initialSport)
   const [gender, setGender] = useState(null)
   const [size, setSize] = useState(50)
+  const router = useRouter()
   const { colorMode } = useColorMode()
+  const [user, setUser] = useState<IUser | null>(null)
 
   useEffect(() => {
     document.body.style.backgroundColor = bgColor[colorMode]
@@ -65,11 +70,42 @@ const Home = ({ sport: initialSport }) => {
     setHexCode(color.hex)
   }
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/api/v1/auth/user', {
+        withCredentials: true,
+      })
+      .then(response => {
+        setUser(response.data.user)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }, [])
+
+  const logOut = async () => {
+    try {
+      await axios.delete('http://localhost:3001/api/v1/auth', {
+        withCredentials: true,
+      })
+      router.reload()
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    document.body.style.backgroundColor = bgColor[colorMode]
+    console.log(bgColor[colorMode])
+  }, [colorMode])
+
   return (
     <Flex>
       <Head>
         <title>Design your glove!</title>
       </Head>
+      <Navbar user={user} logOut={logOut} url={router.asPath} />
+
       <Gloves hexCode={color} key={count} />
       <Box
         w='560px'
