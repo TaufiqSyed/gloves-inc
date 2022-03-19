@@ -167,10 +167,25 @@ const Home = ({ sport: initialSport }) => {
           </FormControl>
         )}
         <FormControl mb='20px'>
-          <FormLabel>Color</FormLabel>
+          <Box>
+            <FormLabel display='inline-block'>Color</FormLabel>{' '}
+            <Button
+              display='inline-block'
+              float='right'
+              size='sm'
+              mt='-5px'
+              onClick={() => {
+                setColor(hexCode)
+                setCount(count + 1)
+              }}
+            >
+              Set color
+            </Button>
+          </Box>
+
           <Box
             border={'0.37px solid ' + inputColor[colorMode]}
-            p='10px 20px 10px 10px'
+            p='20px 20px 20px 20px'
             borderRadius='8px'
           >
             <SliderPicker
@@ -178,16 +193,6 @@ const Home = ({ sport: initialSport }) => {
               onChangeComplete={handleChangeComplete}
             />
           </Box>
-          <Button
-            onClick={() => {
-              console.log(hexCode)
-              console.log(count)
-              setColor(hexCode)
-              setCount(count + 1)
-            }}
-          >
-            Set color
-          </Button>
         </FormControl>
       </Box>
     </Flex>
